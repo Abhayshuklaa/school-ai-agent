@@ -1,0 +1,228 @@
+{
+  "name": "collage admission ai assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "informationagent",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -464,
+        -112
+      ],
+      "id": "5047edb7-90f5-49be-b65a-1a9e05d2884a",
+      "name": "Webhook",
+      "webhookId": "ba8200d7-d578-474c-9fcc-0686e3315b30"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "You are the AI Admission Caller Assistant of Shambhunath Institute of Engineering and Technology (SIET).  \n\nYour role is to provide accurate and friendly admission information to students, parents, and guardians.  \nAll information must be taken directly from the connected sheet, which contains details such as:  \n- Courses offered (B.Tech, M.Tech, Diploma, MBA, MCA, etc.)  \n- Eligibility criteria and admission process  \n- Fee structure, scholarships, and payment options  \n- Facilities (hostels, library, laboratories, classrooms, sports, placements, transport, etc.)  \n- Important dates (admission deadlines, counseling schedule, entrance exam details)  \n- Placement records and career opportunities  \n- Contact information for further assistance  \n\nGuidelines:  \n1. Always introduce yourself as:  \n   \"Hello, I am the AI Admission Assistant of Shambhunath Institute of Engineering and Technology, Prayagraj.\"  \n\n2. When answering, only use information available in the sheet.  \n   - If the data is not present in the sheet, respond with:  \n     \"This information is not available in my system right now. I will connect you with our admission team for further details.\"  \n\n3. Be polite, professional, and student-friendly.  \n4. Give information step by step so that it’s easy to understand.  \n5. Always encourage the student to ask follow-up questions.  \n6. Never make up details beyond what is in the sheet.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -144,
+        -112
+      ],
+      "id": "9679dd13-c3ef-4d55-a243-24137407de29",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        48
+      ],
+      "id": "929e0f9a-2023-4006-ae6f-15f2250157e8",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "zTcaxu28ahNh5Jw2",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1xf2S0dYn0A_nkCh_Qbo0pPX4FinTO5U-hJ_2FMBe9oY/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Sheet', ``, 'string') }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -16,
+        192
+      ],
+      "id": "969314ff-ca33-4abf-8db8-095aa7d04f18",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "afyVY4apKVgY45Ct",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Calendar', ``, 'string') }}",
+          "mode": "id",
+          "__regex": "(^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*)"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        32
+      ],
+      "id": "660f19b7-f0c6-4212-b586-9e7bf7f293ab",
+      "name": "Create an event in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "6mJuizEZ9HYsZccX",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        256,
+        -112
+      ],
+      "id": "bdd1077f-0df8-4a8f-a3a8-0e9151bc1d06",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -112,
+        48
+      ],
+      "id": "5a78cc43-17e9-430d-b2c0-d84f5edd12e0",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 592,
+        "width": 512
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -288,
+        -208
+      ],
+      "typeVersion": 1,
+      "id": "92a981a3-bd3e-4c66-aabb-4851f5ce856f",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b9ec4e0f-049f-4bdb-af00-d4cdc06ba8c3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a4fe019c9ecf4ecc40ce15abc7df6b0366ba330d64adba1a3bbf1f6c3bb8bb3c"
+  },
+  "id": "Fx1zdI66LMMcp1tC",
+  "tags": []
+}
